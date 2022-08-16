@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hostpah-kubernetes-webhook
+  name: hostpah-kubernetes-webhook
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hostpah-kubernetes-webhook
+  template:
+    metadata:
+      labels:
+        app: hostpah-kubernetes-webhook
+    spec:
+      tolerations:
+        - key: acme.com/lifespan-remaining
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - image: 1100/validating-webhook:v1.2
+          imagePullPolicy: Always
+          name: hostpah-kubernetes-webhook
+          env:
+            - name: TLS
+              value: "true"
+            - name: LOG_LEVEL
+              value: "trace"
+            - name: LOG_JSON
+              value: "false"
+          volumeMounts:
+            - name: tls
+              mountPath: "/etc/admission-webhook/tls"
+              readOnly: true
+      volumes:
+        - name: tls
+          secret:
+            secretName: server-cert
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: hostpah-kubernetes-webhook
+  name: hostpah-kubernetes-webhook
+  namespace: default
+spec:
+  type: NodePort
+  ports:
+    - port: 443
+      protocol: TCP
+      targetPort: 443
+      nodePort: 30100
+  selector:
+    app: hostpah-kubernetes-webhook

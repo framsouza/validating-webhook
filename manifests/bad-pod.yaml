@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: apps
+  labels:
+    admission-webhook: enabled
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: offensive-pd
+  namespace: apps
+spec:
+  containers:
+  - image: k8s.gcr.io/test-webserver
+    name: test-container
+    volumeMounts:
+    - mountPath: /test-pd
+      name: test-volume
+  volumes:
+  - name: test-volume
+    hostPath:
+      path: /
+      type: Directory

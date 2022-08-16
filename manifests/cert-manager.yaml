@@ -1,0 +1,78 @@
+kind: ClusterIssuer
+apiVersion: cert-manager.io/v1
+metadata:
+  name: ca-bootstrap
+spec:
+  selfSigned: {}
+---
+kind: Certificate
+apiVersion: cert-manager.io/v1
+metadata:
+  name: ca-root
+  namespace: cert-manager
+spec:
+  secretName: ca-root
+  isCA: true
+  commonName: ca-root
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    kind: ClusterIssuer
+    name: ca-bootstrap
+---
+kind: ClusterIssuer
+apiVersion: cert-manager.io/v1
+metadata:
+  name: ca-root
+spec:
+  ca:
+    secretName: ca-root
+---
+kind: Certificate
+apiVersion: cert-manager.io/v1
+metadata:
+  name: server
+spec:
+  issuerRef:
+    name: ca-root
+    kind: ClusterIssuer
+  secretName: server-cert
+  duration: 2160h
+  renewBefore: 360h
+  dnsNames:
+    # - mutating-webhook.default.svc
+    - hostpah-kubernetes-webhook
+    - hostpah-kubernetes-webhook.acme.com
+    - hostpah-kubernetes-webhook.default.svc
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - client auth
+    - server auth
+---
+kind: Certificate
+apiVersion: cert-manager.io/v1
+metadata:
+  name: client
+spec:
+  issuerRef:
+    name: ca-root
+    kind: ClusterIssuer
+  secretName: client-cert
+  duration: 2160h
+  renewBefore: 360h
+  dnsNames:
+    - hostpah-kubernetes-webhook
+    - hostpah-kubernetes-webhook.acme.com
+    - hostpah-kubernetes-webhook.default.svc
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - client auth
+    - server auth
+---

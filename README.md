@@ -19,6 +19,6 @@ This is using cert-manager to generate the certs.
 ```
 kubectl create -f manifests/bad-pod.yaml 
 namespace/apps created
-Error from server: error when creating "manifests/bad-pod.yaml": admission webhook "hostpah-kubernetes-webhook.acme.com" denied the request: pod name contains "/" as hostPath
+Error from server: error when creating "manifests/bad-pod.yaml": admission webhook "hostpah-kubernetes-webhook.acme.com" denied the request: pod contains "/" as hostPath
 ```
 

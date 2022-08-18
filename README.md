@@ -12,7 +12,7 @@ This is using cert-manager to generate the certs.
 3. `git clone git@github.com:framsouza/validating-webhook.git`
 4. `kubectl create -f manifests/cert-manager.yaml`
 5. `kubectl create -f manifests/validation.yaml`
-6. `kubectl create -f manifests/webhok.yaml`
+6. `kubectl create -f manifests/webhook.yaml`
 7. `kubectl create -f manifests/bad-pod.yaml`
 
   The command will try to spin up a pod that mounts `/`. The output is the following:
